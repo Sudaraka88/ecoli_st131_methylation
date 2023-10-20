@@ -22,34 +22,14 @@ if(file.exists("methy_data.rds")) {
   saveRDS(methy_data, "methy_data.rds")
 }
 
-# break it apart
+# break apart the list of lists
 cpg = methy_data$cpg
 dam = methy_data$dam
 dcm = methy_data$dcm
 rm(methy_data)
 
-# cpg = list()
-# for(i in dir('data', 'cpg', full.names = T)){
-#   tmp = readRDS(i)
-#   nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
-#   cpg[[nm]] = tmp
-# }
-# dam = list()
-# for(i in dir('data', 'dam', full.names = T)){
-#   tmp = readRDS(i)
-#   nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
-#   dam[[nm]] = tmp
-# }
-# dcm = list()
-# for(i in dir('data', 'dcm', full.names = T)){
-#   tmp = readRDS(i)
-#   nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
-#   dcm[[nm]] = tmp
-# }
-
-
-
 patch_multi_line_json = function(json){
+  # JSON needs some patching due to misplaced [,] brackets
   if(length(json) == 1) return(json)
 
   l = length(json)
@@ -75,7 +55,7 @@ ui <- fluidPage(
     navbarPage("Ecoli ST131 Methylation Browser", id = "ecm",
                tabPanel("Options", value = "Options",
                         h4("Viewing Options"),
-                        span("Select the required methylation type and barcodes and click Update Tracks"),
+                        span("Select required methylation type(s) and barcode(s) and click Update Tracks"),
                         br(),
                         br(),
                         checkboxGroupInput(
@@ -113,8 +93,8 @@ ui <- fluidPage(
                         br(),
                        
                         h5("Navigate using Bookmarked Features"),
-                        span("Click any genomic feature in the Browser window (gold segments) and they will be added to this table.
-                             You can search, navigate or delete chosen features in the table."),
+                        span("Click any genomic feature in the Browser window (gold segments) and it will be added to this table.
+                             You can quickly jump to those features from this table."),
                         br(),
                         dataTableOutput("bookmarks"),
                         actionButton(
@@ -141,7 +121,7 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
-  # s = JBrowseR::serve_data('data') 
+  # s = JBrowseR::serve_data('data')  ## local server, moved to S3
   
   proxy = dataTableProxy('bookmarks')
   
@@ -173,7 +153,7 @@ server <- function(input, output, session) {
  
   
   # some reactive values that our UI can change
-  loc <- reactiveValues(val = "pangenome_0001_length_5277220:2,075,785..2,077,085")
+  loc <- reactiveValues(val = "pangenome_0001_length_5277220:2,075,785..2,077,085") # initial place to show
   
   ###### add or remove bookmark logic ######
   # add or remove bookmark logic
@@ -310,11 +290,8 @@ server <- function(input, output, session) {
   
   observeEvent(input$update, {
     ## logic to get proper tracks
-    
-    # tk = c('bc1_dam', 'bc1_dcm', 'annotations_track')
-    # for(i in 1:2){
-    
-    if(input$srt == "meth"){
+
+    if(input$srt == "meth"){ # sort by methylation
       idx = c()
       for(i in input$bc_choice){
         idx = c(idx, grep(i, all_tracks))
@@ -323,8 +300,8 @@ server <- function(input, output, session) {
       idx = c()
       for(i in input$meth_choice){
         idx = c(idx, grep(i, tmp))
-      }
-    } else {
+      } 
+    } else { # sort by barcode
       idx = c()
       for(i in input$meth_choice){
         idx = c(idx, grep(i, all_tracks))
@@ -336,9 +313,9 @@ server <- function(input, output, session) {
       }
     }
     
-    tk1 = tmp[idx]
+    tk1 = tmp[idx] # sorted order of methylation tracks
     
-    tk1 = c('annotations_track', tk1)
+    tk1 = c('annotations_track', tk1) # add annotations_track 
     tracks <- patch_multi_line_json(tracks(sapply(tk1, function(x) eval(parse(text = x)))))
     
     
@@ -363,7 +340,7 @@ server <- function(input, output, session) {
   })
   
   session$onSessionEnded(function() {
-    # s$stop_server()
+    # s$stop_server() # local server (moved to S3)
     stopApp()
   })
 }
