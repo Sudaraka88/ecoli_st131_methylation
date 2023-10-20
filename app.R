@@ -7,25 +7,40 @@ library(tibble)
 library(DT)
 library(dplyr)
 
-## get the methylation data
-cpg = list()
-for(i in dir('data', 'cpg', full.names = T)){
-  tmp = readRDS(i)
-  nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
-  cpg[[nm]] = tmp
+## get the methylation data from local source if it exists, else load from s3
+if(file.exists("methy_data.rds")) {
+  methy_data = readRDS("methy_data.rds")
+} else {
+  methy_data = readRDS(url("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/methy_data.rds"))
+  saveRDS(methy_data, "methy_data.rds")
 }
-dam = list()
-for(i in dir('data', 'dam', full.names = T)){
-  tmp = readRDS(i)
-  nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
-  dam[[nm]] = tmp
-}
-dcm = list()
-for(i in dir('data', 'dcm', full.names = T)){
-  tmp = readRDS(i)
-  nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
-  dcm[[nm]] = tmp
-}
+
+# break it apart
+cpg = methy_data$cpg
+dam = methy_data$dam
+dcm = methy_data$dcm
+rm(methy_data)
+
+# cpg = list()
+# for(i in dir('data', 'cpg', full.names = T)){
+#   tmp = readRDS(i)
+#   nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
+#   cpg[[nm]] = tmp
+# }
+# dam = list()
+# for(i in dir('data', 'dam', full.names = T)){
+#   tmp = readRDS(i)
+#   nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
+#   dam[[nm]] = tmp
+# }
+# dcm = list()
+# for(i in dir('data', 'dcm', full.names = T)){
+#   tmp = readRDS(i)
+#   nm = unlist(strsplit(unlist(strsplit(i, "/"))[2], "_"))[1]
+#   dcm[[nm]] = tmp
+# }
+
+
 
 patch_multi_line_json = function(json){
   if(length(json) == 1) return(json)
