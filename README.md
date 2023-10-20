@@ -36,9 +36,14 @@ If everything works as expected, the app should open in a new RStudio
 ![](screenshots/welcome.png)
 
 Click on `Update Tracks` to load the genome, annotation and selected
-methylation and barcode tracks. Methylation and barcode selections can
-be modified using check boxes and browser view can be updated by
-clicking `Update Tracks`.
+methylation and barcode tracks. This will automatically switch the app
+into the `Browser` (right) page. Please click on `Options` (left) page
+to come back to this view. It is possible to modify methylation and
+barcode selections using check boxes and the browser view can be updated
+(again) by clicking `Update Tracks`.
+
+> **Note** Adding a large number of methylation tracks might slow down
+> the the browser!
 
 The browser view is based on [jbrowse2](https://jbrowse.org/jb2/). There
 are standard options to zoom in, out and scroll through regions. It is
@@ -50,11 +55,13 @@ In the browser view, click on any genomic annotation (gold horizontal
 bars) to fetch information from the annotation (e.g., gene name,
 nucleotide sequence) ![](screenshots/gffinfo.png)
 
-Clicking these annotations will add them to the bookmarks table in the
-options page. This can also be used to quickly jump between saved
-regions. ![](screenshots/bookmarks.png)
+Clicking these annotations will add them to the `bookmarks table` in the
+`Options` (left) page. This table can also be used to quickly jump
+between saved regions by clicking the `Navigate` button below. Entries
+in the `bookmarks table` can be edited using controls below it.
+![](screenshots/bookmarks.png)
 
-Once an interested region is identified, it is possible to zoom in to
-view the nucleotide and AA sequences. The height of methylation (blue
-vertical) bars depicts the ratio between methylated and total reads
+Once an interesting region is identified, it is possible to zoom in to
+view the nucleotide and AA sequences. The height of methylation bars
+(blue vertical) show the ratio between methylated and total reads
 covering the region. ![](screenshots/viewer.png)
