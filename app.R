@@ -160,7 +160,7 @@ server <- function(input, output, session) {
     assign(paste(names(cpg)[i], "_cpg", sep = ""), track_data_frame(cpg[[i]], paste(names(cpg)[i],"_cpg",sep = ""), assembly))
   }
   for(i in 1:length(dam)){
-    assign(paste(names(dam)[i], "_dam", sep = ""),track_data_frame(cpg[[i]], paste(names(cpg)[i],"_dam",sep = ""), assembly))
+    assign(paste(names(dam)[i], "_dam", sep = ""),track_data_frame(dam[[i]], paste(names(dam)[i],"_dam",sep = ""), assembly))
   }
   for(i in 1:length(dcm)){
     assign(paste(names(dcm)[i], "_dcm", sep = ""), track_data_frame(dcm[[i]],  paste(names(dcm)[i],"_dcm",sep = ""), assembly))

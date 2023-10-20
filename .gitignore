@@ -1,3 +1,4 @@
+.DS_Store
 # History files
 .Rhistory
 .Rapp.history
@@ -35,6 +36,7 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+*.Rmd
 
 # R Environment Variables
 .Renviron
@@ -47,3 +49,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# screenshots
+screenshots/
