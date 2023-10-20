@@ -1,3 +1,10 @@
+## install dependencies
+list.of.packages <- c("shinyWidgets","shinyalert","JBrowseR","bslib","tibble","DT","dplyr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+#install missing ones
+if(length(new.packages)) install.packages(new.packages, dependencies = TRUE)
+
+
 library(shiny)
 library(shinyWidgets)
 library(shinyalert)
@@ -128,39 +135,35 @@ ui <- fluidPage(
                ),
                tabPanel("Browser", value = "Browser",
                         # this adds to the browser to the UI, and specifies the output ID in the server
-                        JBrowseR::JBrowseROutput("browserOutput")))
+                        JBrowseROutput("browserOutput")))
   )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
-  # s = JBrowseR::serve_data('data')
+  # s = JBrowseR::serve_data('data') 
   
   proxy = dataTableProxy('bookmarks')
-  ## DEBUG ##
-  
-  ## DEBUG ##
   
   # create the necessary JB2 assembly configuration
-  # assembly <- JBrowseR::assembly("http://127.0.0.1:5000/ecoli_st131.fa.gz", bgzip = TRUE)
-  assembly <- JBrowseR::assembly("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.fa.gz",
-                                 bgzip = T)
+  # assembly <- JBrowseR::assembly("http://127.0.0.1:5000/ecoli_st131.fa.gz", bgzip = TRUE) # local path for testing
+  
+  assembly <- assembly("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.fa.gz", bgzip = T)
   
   # 
   # # create configuration for a JB2 GFF FeatureTrack
-  annotations_track <- JBrowseR::track_feature("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.gff3.gz",
-                                               assembly)
+  annotations_track <- track_feature("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.gff3.gz", assembly)
   
   # create the tracks array to pass to browser
   
   for(i in 1:length(cpg)){
-    assign(paste(names(cpg)[i], "_cpg", sep = ""), JBrowseR::track_data_frame(cpg[[i]], paste(names(cpg)[i],"_cpg",sep = ""), assembly))
+    assign(paste(names(cpg)[i], "_cpg", sep = ""), track_data_frame(cpg[[i]], paste(names(cpg)[i],"_cpg",sep = ""), assembly))
   }
   for(i in 1:length(dam)){
-    assign(paste(names(dam)[i], "_dam", sep = ""), JBrowseR::track_data_frame(cpg[[i]], paste(names(cpg)[i],"_dam",sep = ""), assembly))
+    assign(paste(names(dam)[i], "_dam", sep = ""),track_data_frame(cpg[[i]], paste(names(cpg)[i],"_dam",sep = ""), assembly))
   }
   for(i in 1:length(dcm)){
-    assign(paste(names(dcm)[i], "_dcm", sep = ""), JBrowseR::track_data_frame(dcm[[i]],  paste(names(dcm)[i],"_dcm",sep = ""), assembly))
+    assign(paste(names(dcm)[i], "_dcm", sep = ""), track_data_frame(dcm[[i]],  paste(names(dcm)[i],"_dcm",sep = ""), assembly))
   }
   
   # shown_tracks <- reactiveValues(val = c(annotations_track))
@@ -176,7 +179,7 @@ server <- function(input, output, session) {
   # add or remove bookmark logic
   values <- reactiveValues()
   
-  values$bookmark_df <- tibble::tibble(
+  values$bookmark_df <- tibble(
     chrom = character(),
     start = numeric(),
     end = numeric(),
@@ -200,7 +203,7 @@ server <- function(input, output, session) {
     }
   })
   
-  output$bookmarks <- DT::renderDT(values$bookmark_df)
+  output$bookmarks <- renderDT(values$bookmark_df)
   
   #### Quick selection of barcodes ####
   observeEvent(input$btn_all, {
@@ -336,7 +339,7 @@ server <- function(input, output, session) {
     tk1 = tmp[idx]
     
     tk1 = c('annotations_track', tk1)
-    tracks <- patch_multi_line_json(JBrowseR::tracks(sapply(tk1, function(x) eval(parse(text = x)))))
+    tracks <- patch_multi_line_json(tracks(sapply(tk1, function(x) eval(parse(text = x)))))
     
     
     ds = default_session(assembly, sapply(tk1, function(x) eval(parse(text = x))), display_assembly = TRUE)
