@@ -21,8 +21,7 @@ speed.
 ## Walkthrough
 
 If everything works as expected, the app should open in a new RStudio or
-Browser window:
-![](https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/screenshots/welcome.png)
+Browser window: ![](screenshots/welcome.png)
 
 Click on Update Tracks to load the genome, annotation and selected
 methylation and barcode tracks. Methylation and barcode selections can
@@ -37,16 +36,13 @@ genome annotation can be searched using the same search box (E.g. DnaA).
 
 In the browser view, click on any genomic annotation (gold horizontal
 bars) to fetch information from the annotation (e.g., gene name,
-nucleotide sequence)
-![](https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/screenshots/gffinfo.png)
+nucleotide sequence) ![](screenshots/gffinfo.png)
 
 Clicking these annotations will add them to the bookmarks table in the
 options page. This can also be used to quickly jump between saved
-regions.
-![](https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/screenshots/bookmarks.png)
+regions. ![](screenshots/bookmarks.png)
 
 Once an interested region is identified, it is possible to zoom in to
 view the nucleotide and AA sequences. The height of methylation (blue
 vertical) bars depicts the ratio between methylated and total reads
-covering the region.
-![](https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/screenshots/viewer.png)
+covering the region. ![](screenshots/viewer.png)
