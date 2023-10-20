@@ -48,7 +48,7 @@ patch_multi_line_json = function(json){
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-  
+  theme = bs_theme(version = 5),
   shinyUI(
     navbarPage("Ecoli ST131 Methylation Browser", id = "ecm",
                tabPanel("Options", value = "Options",
@@ -72,7 +72,7 @@ ui <- fluidPage(
                         actionGroupButtons(
                           inputIds = c("btn_all", "btn_reset", "btn_odds", "btn_evens", "btn_1to6", "btn_1to12", "btn_12to18", 
                                        "btn_12to24", "btn_r12"), 
-                          size = "xs",
+                          size = "s",
                           labels = list("All", "Reset", "Odds", "Evens", "First 6", "First 12", "12 to 18", "Last 12", "Random 12"), 
                           status = "info"
                         ),
@@ -119,7 +119,7 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
-  s = JBrowseR::serve_data('data')
+  # s = JBrowseR::serve_data('data')
   
   proxy = dataTableProxy('bookmarks')
   ## DEBUG ##
@@ -127,10 +127,14 @@ server <- function(input, output, session) {
   ## DEBUG ##
   
   # create the necessary JB2 assembly configuration
-  assembly <- JBrowseR::assembly("http://127.0.0.1:5000/ecoli_st131.fa.gz", bgzip = TRUE)
+  # assembly <- JBrowseR::assembly("http://127.0.0.1:5000/ecoli_st131.fa.gz", bgzip = TRUE)
+  assembly <- JBrowseR::assembly("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.fa.gz",
+                                 bgzip = T)
+  
   # 
   # # create configuration for a JB2 GFF FeatureTrack
-  annotations_track <- JBrowseR::track_feature("http://127.0.0.1:5000/ecoli_st131.gff3.gz", assembly)
+  annotations_track <- JBrowseR::track_feature("https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.gff3.gz",
+                                               assembly)
   
   # create the tracks array to pass to browser
   
@@ -330,13 +334,18 @@ server <- function(input, output, session) {
         assembly = assembly,
         tracks = tracks,
         location = loc$val,
-        defaultSession = ds
+        defaultSession = ds,
+        text_index = text_index(
+          "https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.ix",
+          "https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131.ixx",
+          "https://ecoli-st131.s3.ap-southeast-2.amazonaws.com/ecoli_st131_meta.json",
+          "ecoli_st131")
       )
     )
   })
   
   session$onSessionEnded(function() {
-    s$stop_server()
+    # s$stop_server()
     stopApp()
   })
 }
